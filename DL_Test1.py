@@ -1,9 +1,19 @@
 import torch
 
 
-t = (2, 3)
 
-pixel_coords = [[(x, y) for y in range(t[1])] for x in range(t[0])]
+a = [i for i in range(21)]
 
-for p in pixel_coords:
-    print(p)
+a = torch.tensor(a)
+a = a.reshape(3, -1)
+
+print(a)
+print(a.shape)
+
+print("----------------")
+
+b = a.permute(-1, -2)
+print(b)
+print(b.shape)
+
+

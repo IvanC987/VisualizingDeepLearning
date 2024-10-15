@@ -11,14 +11,14 @@ print(f"Currently using {device=}")
 
 # Hyperparameters
 # -----------------------------------
-num_terms = 20
+num_terms = 10
 lr = 0.05
 
 training_iterations = 1500
 eval_interval = 10
 
 patch_size = 5
-image_path = "./Images/Mandelbrot_Fractal_3840x2160.png"
+image_path = "./Images/Mandelbrot_Fractal_1024x768.png"
 save_image_path = "./CreatedImages/"
 # -----------------------------------
 
@@ -27,7 +27,6 @@ save_image_path = "./CreatedImages/"
 
 def init_data():
     image_data, image_dimensions = get_image_data(image_path, patch_size)
-    image_data = image_data.to(device)
 
     # Pixel Coordinates would be a tensor of shape (num_pixels, 2)
     pixel_coords = torch.tensor([[(x, y) for y in range(image_dimensions[1])] for x in range(image_dimensions[0])], dtype=torch.float32).reshape(-1, 2)
@@ -87,7 +86,7 @@ class TSApproximation(nn.Module):
         # # Stack it to get (RGB, num_pixels)
         # output = torch.stack((red_bias, green_bias, blue_bias))
 
-        output = torch.zeros(3, num_pixels)
+        output = torch.zeros(3, num_pixels, device=device)
 
         # for color in range(3):
         #     for ith_pixel in range(num_pixels):
@@ -130,6 +129,7 @@ save_image(target_data, image_dimensions, f"{save_image_path}Target.png")
 
 
 model = TSApproximation(image_dimensions, num_terms=num_terms).to(device)
+model = model.half()
 criterion = nn.MSELoss()
 optimizer = AdamW(model.parameters(), lr=lr)
 
@@ -147,17 +147,15 @@ prev_loss = 0
 print("Starting")
 image_index = 0
 for step in range(training_iterations):
-    y_pred = model(pixel_coords)
+    with torch.amp.autocast(device):
+        y_pred = model(pixel_coords)
     loss = criterion(y_pred, target_data)
 
-    if step == 0:
-        print("First")
     optimizer.zero_grad(set_to_none=True)
     loss.backward()
     optimizer.step()
 
-    if step == 0:
-        print("Here")
+
     if step % eval_interval == 0 or step == training_iterations - 1:
         save_image(y_pred, image_dimensions, f"{save_image_path}image{image_index}.png")
         print(f"Currently at step={step}   |   loss={loss.item():.2f}   |   time={time.time() - start:.1f}s   |   Loss_decrease={"N/A-" if prev_loss == 0 else round((1 - (loss.item()/prev_loss)) * 100, 2)}%")

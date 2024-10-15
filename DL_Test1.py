@@ -1,19 +1,31 @@
 import torch
 
+dimensions = [9, 6]
+width, height = dimensions[1], dimensions[0]
+patch_size = 3
 
+a = [i for i in range(dimensions[0] * width)]
 
-a = [i for i in range(21)]
+original = torch.tensor(a)
 
 a = torch.tensor(a)
-a = a.reshape(3, -1)
 
-print(a)
-print(a.shape)
+temp = a.reshape(dimensions)
 
-print("----------------")
+print(temp)
 
-b = a.permute(-1, -2)
-print(b)
-print(b.shape)
+print("\n\n\n\n")
+
+for i in range(len(a)):
+    coords = [i//width, i % width]
+    a[i] = ((coords[0]//patch_size) * (width//patch_size)) + (coords[1] // patch_size)
+    print(f"{i=}, {a[i]}, {coords=}")
 
 
+# for i in range(len(a)):
+#     a[i] = (i//patch_size**2) + ((i % width) // patch_size)
+#     print(f"{i=}, {a[i]}")
+
+
+print(original.reshape(dimensions))
+print(a.reshape(dimensions))

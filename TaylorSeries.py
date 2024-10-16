@@ -15,7 +15,7 @@ num_terms = 10
 lr = 0.05
 
 training_iterations = 1500
-eval_interval = 10
+eval_interval = 1
 
 patch_size = 5
 image_path = "./Images/Mandelbrot_Fractal_1024x768.png"
@@ -158,7 +158,7 @@ for step in range(training_iterations):
 
     if step % eval_interval == 0 or step == training_iterations - 1:
         save_image(y_pred, image_dimensions, f"{save_image_path}image{image_index}.png")
-        print(f"Currently at step={step}   |   loss={loss.item():.2f}   |   time={time.time() - start:.1f}s   |   Loss_decrease={"N/A-" if prev_loss == 0 else round((1 - (loss.item()/prev_loss)) * 100, 2)}%")
+        print(f"Currently at step={step}   |   loss={loss.item():.2f}   |   time={time.time() - start:.1f}s   |   Loss_decrease={'N/A-' if prev_loss == 0 else round((1 - (loss.item()/prev_loss)) * 100, 2)}%")
         prev_loss = loss.item()
         start = time.time()
         image_index += 1

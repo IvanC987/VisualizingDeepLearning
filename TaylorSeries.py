@@ -18,7 +18,7 @@ training_iterations = 1500
 eval_interval = 1
 
 patch_size = 5
-image_path = "./Images/Mandelbrot_Fractal_1024x768.png"
+image_path = "./Images/Mandelbrot_Fractal_160x120.png"
 save_image_path = "./CreatedImages/"
 # -----------------------------------
 
